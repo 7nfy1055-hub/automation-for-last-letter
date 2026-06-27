@@ -88,21 +88,6 @@ pyinstaller --onefile --windowed --icon=LastLetter.ico last_letter_automation.py
 
 ---
 
-## Version History
-
-### v2.0.0
-
-* New modern dark interface
-* Improved overall design
-
-### v1.5.0
-
-* Added word history
-* Added offline fallback word list
-
-### v1.0.0
-
-* Initial release
 
 ---
 
