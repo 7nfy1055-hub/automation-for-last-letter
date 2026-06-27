@@ -1,5 +1,6 @@
 """
-
+Last Letter Automation - Neon Edition
+A utility for the Roblox Last Letter game
 """
 
 import threading
@@ -274,6 +275,91 @@ class LastLetterApp:
             self.mode_display.config(text="MODE: LONG")
 
     def load_wordlist(self) -> None:
+        custom_words = [
+            "apple", "able", "about", "above", "across", "action", "after", "again", "against", "age",
+            "agree", "air", "all", "allow", "almost", "alone", "along", "already", "also", "always",
+            "among", "animal", "another", "answer", "any", "anyone", "appear", "area", "arm", "around",
+            "arrive", "art", "ask", "back", "ball", "band", "bank", "base", "battle", "beach",
+            "bear", "beat", "because", "become", "bed", "before", "begin", "behind", "believe", "best",
+            "better", "between", "big", "bird", "black", "blood", "blue", "board", "boat", "body",
+            "book", "born", "both", "bottom", "box", "boy", "break", "bring", "brother", "brown",
+            "build", "burn", "business", "busy", "call", "camp", "car", "card", "care", "carry",
+            "case", "cash", "cat", "catch", "center", "chance", "change", "charge", "child", "choose",
+            "city", "class", "clean", "clear", "close", "cloud", "club", "coach", "coast", "color",
+            "come", "company", "complete", "computer", "country", "course", "cover", "create", "cross", "crowd",
+            "cry", "current", "cut", "dance", "danger", "dark", "date", "day", "dead", "deal",
+            "death", "deep", "design", "develop", "die", "differ", "difficult", "direct", "dog", "dollar",
+            "door", "down", "draw", "dream", "dress", "drink", "drive", "drop", "drug", "dry",
+            "during", "each", "early", "east", "easy", "eat", "economic", "edge", "education", "effect",
+            "effort", "eight", "either", "electric", "else", "end", "enemy", "enjoy", "enough", "enter",
+            "entire", "equal", "especially", "even", "evening", "event", "ever", "every", "everyone", "example",
+            "except", "exist", "expect", "experience", "eye", "face", "fact", "fail", "fall", "family",
+            "far", "farm", "fast", "father", "fear", "feel", "feet", "fight", "figure", "fill",
+            "final", "find", "fine", "finger", "finish", "fire", "first", "fish", "five", "floor",
+            "fly", "follow", "food", "foot", "for", "force", "foreign", "form", "former", "forward",
+            "four", "free", "friend", "from", "front", "full", "game", "garden", "general", "get",
+            "girl", "give", "glass", "go", "god", "gold", "good", "government", "grand", "great",
+            "green", "ground", "group", "grow", "guess", "gun", "guy", "hair", "half", "hand",
+            "happen", "happy", "hard", "have", "he", "head", "hear", "heart", "heat", "heavy",
+            "help", "her", "here", "high", "history", "hit", "hold", "home", "hope", "horse",
+            "hospital", "hot", "hotel", "hour", "house", "how", "however", "huge", "human", "hundred",
+            "husband", "idea", "identify", "imagine", "important", "improve", "include", "increase", "indeed", "indicate",
+            "individual", "industry", "information", "inside", "instead", "institution", "interest", "into", "investment", "issue",
+            "it", "item", "job", "join", "just", "keep", "key", "kid", "kill", "kind",
+            "king", "kitchen", "know", "land", "language", "large", "last", "late", "later", "laugh",
+            "law", "lay", "lead", "learn", "least", "leave", "left", "less", "let", "letter",
+            "level", "life", "light", "like", "line", "list", "listen", "little", "live", "local",
+            "long", "look", "lose", "loss", "lot", "love", "low", "machine", "magazine", "main",
+            "maintain", "major", "make", "man", "manage", "many", "market", "marriage", "material", "matter",
+            "may", "maybe", "mean", "measure", "medical", "meet", "member", "memory", "mention", "message",
+            "method", "middle", "might", "military", "million", "mind", "minute", "miss", "mission", "model",
+            "modern", "moment", "money", "month", "more", "morning", "most", "mother", "mouth", "move",
+            "movement", "movie", "much", "music", "must", "name", "nation", "national", "natural", "nature",
+            "near", "nearly", "necessary", "need", "network", "never", "new", "news", "next", "nice",
+            "night", "nine", "no", "none", "nor", "north", "not", "note", "nothing", "notice",
+            "now", "number", "occur", "off", "offer", "office", "officer", "official", "often", "oil",
+            "old", "once", "one", "only", "open", "operation", "opportunity", "option", "order", "organization",
+            "other", "our", "out", "outside", "over", "own", "page", "paint", "paper", "parent",
+            "part", "participant", "particular", "partner", "party", "pass", "past", "patient", "pattern", "pay",
+            "peace", "people", "per", "perform", "perhaps", "period", "person", "personal", "phone", "physical",
+            "pick", "picture", "piece", "place", "plan", "plant", "play", "player", "point", "police",
+            "policy", "political", "politics", "poor", "popular", "population", "position", "positive", "possible", "power",
+            "practice", "prepare", "present", "president", "pressure", "pretty", "prevent", "price", "private", "probably",
+            "problem", "process", "produce", "product", "professional", "professor", "program", "project", "property", "protect",
+            "prove", "provide", "public", "pull", "purpose", "push", "put", "quality", "question", "quickly",
+            "quite", "race", "radio", "raise", "range", "rate", "rather", "reach", "read", "ready",
+            "real", "reality", "realize", "really", "reason", "receive", "recent", "recently", "recognize", "record",
+            "red", "reduce", "reflect", "region", "relate", "relationship", "religious", "remain", "remember", "remove",
+            "report", "represent", "republican", "require", "research", "resource", "respond", "response", "responsibility", "rest",
+            "result", "return", "reveal", "rich", "right", "rise", "risk", "road", "rock", "role",
+            "room", "rule", "run", "safe", "same", "save", "scene", "school", "science", "scientist",
+            "sea", "season", "seat", "second", "section", "security", "see", "seek", "seem", "sell",
+            "senior", "sense", "series", "serious", "serve", "service", "set", "seven", "several", "shake",
+            "she", "short", "shot", "should", "shoulder", "show", "side", "sign", "significant", "similar",
+            "simple", "simply", "since", "sing", "single", "sister", "sit", "site", "situation", "six",
+            "size", "skill", "skin", "small", "smile", "social", "society", "soldier", "some", "somebody",
+            "someone", "something", "sometimes", "son", "song", "soon", "sort", "sound", "source", "south",
+            "southern", "space", "speak", "special", "specific", "speech", "spend", "sport", "spring", "staff",
+            "stage", "stand", "standard", "star", "start", "state", "statement", "station", "stay", "step",
+            "still", "stock", "stop", "store", "story", "strategy", "street", "strong", "structure", "student",
+            "study", "stuff", "style", "subject", "success", "successful", "such", "suddenly", "suffer", "suggest",
+            "summer", "support", "sure", "surface", "system", "table", "take", "talk", "task", "tax",
+            "teach", "teacher", "team", "technology", "television", "tell", "ten", "tend", "term", "test",
+            "than", "that", "the", "their", "them", "themselves", "then", "theory", "there", "these",
+            "they", "thing", "think", "third", "this", "those", "though", "thought", "thousand", "threat",
+            "three", "through", "throughout", "throw", "thus", "time", "today", "together", "tonight", "too",
+            "top", "total", "tough", "toward", "town", "trade", "traditional", "training", "travel", "treat",
+            "treatment", "tree", "trial", "trip", "trouble", "true", "truth", "try", "turn", "type",
+            "under", "understand", "unit", "until", "up", "upon", "use", "usually", "value", "various",
+            "very", "victim", "view", "violence", "visit", "voice", "vote", "wait", "walk", "wall",
+            "want", "war", "watch", "water", "way", "we", "weapon", "wear", "week", "weight",
+            "well", "west", "western", "what", "whatever", "when", "where", "whether", "which", "while",
+            "white", "who", "whole", "whose", "why", "wide", "wife", "will", "win", "wind",
+            "window", "wish", "with", "within", "without", "woman", "wonder", "word", "work", "worker",
+            "world", "worry", "would", "write", "writer", "wrong", "yard", "yeah", "year", "yes",
+            "yet", "you", "young", "your", "yourself"
+        ]
+        
         cache_file = "word_cache.json"
         
         if os.path.exists(cache_file):
@@ -295,7 +381,11 @@ class LastLetterApp:
             content = response.read().decode('utf-8')
             
             word_list = [w.strip().lower() for w in content.splitlines() if w.strip()]
-            self.wordlist = sorted([w for w in word_list if len(w) >= 2 and w.isalpha()])
+            
+            combined = set(word_list)
+            combined.update(custom_words)
+            
+            self.wordlist = sorted([w for w in combined if len(w) >= 2 and w.isalpha()])
             
             with open(cache_file, 'w') as f:
                 json.dump(self.wordlist, f)
@@ -304,67 +394,9 @@ class LastLetterApp:
             self.root.after(0, lambda: self.status_var.set(f"✔ {len(self.wordlist)} WORDS LOADED"))
             
         except Exception as exc:
-            self.wordlist_loaded = False
-            self.wordlist_error = exc
-            self.root.after(0, lambda: self.status_var.set("⚠ FALLBACK MODE ACTIVE"))
-            self._load_fallback_words()
-
-    def _load_fallback_words(self) -> None:
-        fallback_words = [
-            "ability", "across", "action", "active", "actual", "address", "advance", "affect", "agency", "agreement",
-            "amount", "animal", "annual", "answer", "appeal", "approach", "around", "arrange", "artistic", "assume",
-            "attack", "attempt", "attend", "attract", "author", "balance", "bargain", "bearing", "becoming", "believe",
-            "beneath", "benefit", "besides", "better", "beyond", "bitter", "blanket", "bother", "bounce", "branch",
-            "breach", "bridge", "briefly", "bright", "broken", "budget", "bullet", "bundle", "burden", "bureau",
-            "button", "camera", "cancel", "carbon", "careful", "carry", "center", "chance", "change", "charge",
-            "cheap", "cheese", "choice", "choose", "chosen", "circle", "client", "closed", "coffee", "colony",
-            "colour", "column", "combat", "comedy", "coming", "common", "comply", "concept", "concern", "conduct",
-            "confirm", "conquer", "consent", "consist", "consult", "contain", "content", "contest", "control",
-            "cooking", "corner", "county", "couple", "course", "cousin", "create", "credit", "crisis", "custom",
-            "damage", "danger", "dealer", "debate", "decade", "defeat", "defend", "define", "degree", "demand",
-            "deputy", "derive", "desert", "design", "desire", "detail", "detect", "device", "devote", "differ",
-            "direct", "doctor", "domain", "double", "driven", "driver", "during", "easily", "eating", "editor",
-            "educate", "effect", "effort", "eighth", "either", "emerge", "empire", "enable", "endure", "energy",
-            "engage", "engine", "enough", "ensure", "escape", "estate", "evolve", "examine", "exceed", "except",
-            "excuse", "exempt", "expand", "expect", "expert", "export", "expose", "extend", "extent", "fabric",
-            "factor", "fairly", "fallen", "farmer", "father", "fellow", "female", "figure", "filter", "finger",
-            "finish", "flower", "flying", "follow", "forbid", "forced", "forest", "forget", "formal", "format",
-            "former", "father", "foster", "french", "friend", "frozen", "future", "gained", "galaxy", "garden",
-            "gather", "gentle", "gently", "gifted", "global", "golden", "govern", "grants", "greater", "ground",
-            "grouped", "growing", "guilty", "guitar", "happen", "hardly", "hazard", "health", "heaven", "hidden",
-            "holder", "honest", "horror", "humble", "hunter", "ignore", "image", "immune", "impact", "import",
-            "impose", "income", "indeed", "indoor", "inform", "injure", "insect", "insert", "inside", "insist",
-            "intact", "intend", "intent", "invest", "invest", "jungle", "junior", "killer", "labour", "landed",
-            "latter", "launch", "lawyer", "layout", "leader", "league", "lender", "lesson", "letter", "likely",
-            "linear", "lively", "living", "lonely", "loving", "luxury", "mainly", "manage", "matter", "medium",
-            "member", "memory", "mental", "merely", "method", "middle", "miller", "mining", "minute", "mirror",
-            "mobile", "modern", "modest", "moment", "monkey", "motive", "mother", "moving", "murder", "muscle",
-            "museum", "mutual", "myself", "namely", "narrow", "nation", "nature", "neither", "neural", "nobody",
-            "normal", "notice", "notion", "number", "object", "obtain", "occupy", "offend", "option", "orient",
-            "origin", "outfit", "outset", "oxygen", "packed", "partly", "patent", "pattern", "pencil", "people",
-            "period", "permit", "person", "phase", "phone", "phrase", "planet", "player", "please", "plenty",
-            "pocket", "poetry", "poison", "policy", "polish", "polite", "poorly", "poster", "potato", "powder",
-            "powder", "prayer", "prefer", "pretty", "prince", "prison", "profit", "proper", "prove", "public",
-            "pursue", "puzzle", "racial", "random", "rarely", "rather", "rating", "reader", "really", "reason",
-            "recall", "recent", "record", "reduce", "reform", "region", "regret", "reject", "relate", "relief",
-            "remain", "remedy", "remote", "remove", "rental", "repair", "repeat", "report", "rescue", "retain",
-            "retire", "return", "reveal", "review", "revolt", "reward", "rising", "robust", "ruling", "running",
-            "sacred", "safety", "salary", "sample", "saving", "scheme", "school", "screen", "search", "season",
-            "second", "secret", "sector", "secure", "select", "seller", "senior", "serial", "settle", "severe",
-            "shadow", "should", "signal", "silent", "silver", "simple", "simply", "single", "skilled", "slave",
-            "smooth", "social", "solely", "solve", "source", "speech", "spirit", "spread", "spring", "square",
-            "stable", "status", "steady", "stereo", "stolen", "strain", "strand", "stream", "street", "stress",
-            "strict", "strike", "string", "strip", "stroke", "strong", "submit", "subtle", "supply", "surely",
-            "surface", "surge", "survey", "switch", "symbol", "system", "tackle", "talent", "target", "temple",
-            "tender", "terror", "thanks", "theirs", "theory", "thirty", "thorn", "threat", "timber", "tissue",
-            "tongue", "toward", "travel", "treaty", "tribal", "trophy", "truly", "twice", "unfair", "unique",
-            "unless", "unlike", "update", "useful", "valley", "vanish", "vendor", "victim", "viewer", "virtue",
-            "vision", "volume", "wallet", "warmly", "wealth", "weapon", "weekly", "weight", "window", "winter",
-            "wisdom", "within", "wonder", "wooden", "worthy", "writer", "yellow", "youth"
-        ]
-        self.wordlist = sorted(fallback_words)
-        self.wordlist_loaded = True
-        self.root.after(0, lambda: self.status_var.set(f"✔ {len(self.wordlist)} FALLBACK WORDS"))
+            self.wordlist_loaded = True
+            self.wordlist = sorted(custom_words)
+            self.root.after(0, lambda: self.status_var.set(f"✔ {len(self.wordlist)} CUSTOM WORDS LOADED"))
 
     def find_completion(self, prefix: str) -> Optional[str]:
         if not self.wordlist_loaded or not self.wordlist:
