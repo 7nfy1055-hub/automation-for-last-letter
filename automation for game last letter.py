@@ -9,6 +9,8 @@ import subprocess
 import ctypes
 import sys
 import os
+import json
+import urllib.request
 from typing import Optional, List, Set
 
 try:
@@ -25,21 +27,7 @@ except ImportError:
     print("tkinter is required but not available")
     sys.exit(1)
 
-try:
-    from english_words import get_english_words_set
-except ImportError:
-    print("Please install english-words: pip install english-words")
-    sys.exit(1)
-
 CURRENT_VERSION = "1.0.0"
-
-def resource_path(relative_path: str) -> str:
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.dirname(__file__)
-    return os.path.join(base_path, relative_path)
-
 
 class LastLetterApp:
     def __init__(self, root: tk.Tk) -> None:
@@ -59,8 +47,6 @@ class LastLetterApp:
         self.border_color = "#00ffcc66"
         self.success_color = "#00ff88"
         self.error_color = "#ff4466"
-        self.neon_pink = "#ff44aa"
-        self.neon_blue = "#4488ff"
 
         self.root.configure(bg=self.bg_color)
 
@@ -288,12 +274,35 @@ class LastLetterApp:
             self.mode_display.config(text="MODE: LONG")
 
     def load_wordlist(self) -> None:
+        cache_file = "word_cache.json"
+        
+        if os.path.exists(cache_file):
+            try:
+                with open(cache_file, 'r') as f:
+                    self.wordlist = json.load(f)
+                    self.wordlist_loaded = True
+                    self.root.after(0, lambda: self.status_var.set(f"✔ {len(self.wordlist)} WORDS LOADED"))
+                    return
+            except:
+                pass
+        
         try:
-            words_set = get_english_words_set(["web2"], lower=False)
-            self.wordlist = sorted(words_set)
+            self.status_var.set("⟳ FETCHING WORD LIST...")
+            self.root.update()
+            
+            url = "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt"
+            response = urllib.request.urlopen(url)
+            content = response.read().decode('utf-8')
+            
+            word_list = [w.strip().lower() for w in content.splitlines() if w.strip()]
+            self.wordlist = sorted([w for w in word_list if len(w) >= 2 and w.isalpha()])
+            
+            with open(cache_file, 'w') as f:
+                json.dump(self.wordlist, f)
+            
             self.wordlist_loaded = True
-            self.wordlist_error = None
             self.root.after(0, lambda: self.status_var.set(f"✔ {len(self.wordlist)} WORDS LOADED"))
+            
         except Exception as exc:
             self.wordlist_loaded = False
             self.wordlist_error = exc
