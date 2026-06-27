@@ -1,6 +1,5 @@
 """
-Last Letter Automation - Neon Edition
-A utility for the Roblox Last Letter game
+
 """
 
 import threading
