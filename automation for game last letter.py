@@ -12,7 +12,6 @@ import sys
 import os
 from typing import Optional, List, Set
 
-# Try to import required packages, with fallbacks
 try:
     import keyboard
 except ImportError:
@@ -36,7 +35,6 @@ except ImportError:
 CURRENT_VERSION = "1.0.0"
 
 def resource_path(relative_path: str) -> str:
-    """Get absolute path to resource, works for dev and for PyInstaller."""
     try:
         base_path = sys._MEIPASS
     except Exception:
@@ -45,8 +43,6 @@ def resource_path(relative_path: str) -> str:
 
 
 class LastLetterApp:
-    """Main application class for Last Letter Automation."""
-    
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Last Letter Automation")
@@ -54,7 +50,6 @@ class LastLetterApp:
         self.root.resizable(False, False)
         self.root.attributes('-topmost', True)
 
-        # Neon color scheme
         self.bg_color = "#0a0a12"
         self.card_color = "#111122"
         self.accent_color = "#00ffcc"
@@ -68,50 +63,29 @@ class LastLetterApp:
         self.neon_pink = "#ff44aa"
         self.neon_blue = "#4488ff"
 
-        # Configure root
         self.root.configure(bg=self.bg_color)
 
-        # Try to set icon
-        try:
-            icon_path = resource_path("LastLetter.ico")
-            if os.path.exists(icon_path):
-                self.root.iconbitmap(icon_path)
-        except Exception as e:
-            print("Icon load error:", e)
-
-        # Word list
         self.wordlist: List[str] = []
         self.wordlist_loaded = False
         self.wordlist_error: Optional[Exception] = None
         self.used_words: Set[str] = set()
 
-        # GUI variables
         self.prefix_var = tk.StringVar()
         self.mode_var = tk.StringVar(value="Short")
 
-        # Build UI
         self._build_ui()
 
-        # Start loading word list in background
         threading.Thread(target=self.load_wordlist, daemon=True).start()
-        
-        # Initial status check
         self.refresh_roblox_status()
-        
-        # Bind events
         self.root.bind("<FocusIn>", lambda event: self.entry.focus_set())
 
     def _build_ui(self) -> None:
-        """Build the neon light user interface."""
-        # Main container
         main_frame = tk.Frame(self.root, bg=self.bg_color, padx=25, pady=20)
         main_frame.pack(fill="both", expand=True)
 
-        # Header section
         header_frame = tk.Frame(main_frame, bg=self.bg_color)
         header_frame.pack(fill="x", pady=(0, 15))
 
-        # Title
         title_label = tk.Label(
             header_frame,
             text="⚡ LAST LETTER AUTOMATION",
@@ -121,7 +95,6 @@ class LastLetterApp:
         )
         title_label.pack(side="left")
 
-        # Status indicator
         status_frame = tk.Frame(header_frame, bg=self.bg_color)
         status_frame.pack(side="right")
 
@@ -133,7 +106,7 @@ class LastLetterApp:
             bg=self.bg_color
         )
         self.status_dot.pack(side="left", padx=(0, 5))
-        
+
         self.roblox_status_var = tk.StringVar(value="OFFLINE")
         roblox_status = tk.Label(
             status_frame,
@@ -144,7 +117,6 @@ class LastLetterApp:
         )
         roblox_status.pack(side="left")
 
-        # Input card
         input_card = tk.Frame(
             main_frame,
             bg=self.card_color,
@@ -155,7 +127,6 @@ class LastLetterApp:
         )
         input_card.pack(fill="x", pady=(0, 12))
 
-        # Label
         label = tk.Label(
             input_card,
             text="» STARTING LETTERS «",
@@ -165,7 +136,6 @@ class LastLetterApp:
         )
         label.pack(anchor="w", pady=(0, 6))
 
-        # Entry
         entry_frame = tk.Frame(input_card, bg=self.card_color)
         entry_frame.pack(fill="x", pady=(0, 8))
 
@@ -187,7 +157,6 @@ class LastLetterApp:
         self.entry.bind("<Control-Return>", self.on_ctrl_enter)
         self.entry.bind("<Return>", self.on_ctrl_enter)
 
-        # Status text
         self.status_var = tk.StringVar(value="⟳ INITIALIZING...")
         status_label = tk.Label(
             input_card,
@@ -198,7 +167,6 @@ class LastLetterApp:
         )
         status_label.pack(anchor="w")
 
-        # Stats bar
         stats_frame = tk.Frame(main_frame, bg=self.bg_color)
         stats_frame.pack(fill="x", pady=(0, 12))
 
@@ -211,7 +179,7 @@ class LastLetterApp:
             bg=self.bg_color
         )
         word_count.pack(side="left")
-        
+
         self.mode_display = tk.Label(
             stats_frame,
             text="MODE: SHORT",
@@ -221,7 +189,6 @@ class LastLetterApp:
         )
         self.mode_display.pack(side="right")
 
-        # Execute button
         btn_frame = tk.Frame(main_frame, bg=self.bg_color)
         btn_frame.pack(fill="x", pady=(0, 12))
 
@@ -241,7 +208,6 @@ class LastLetterApp:
         )
         self.play_btn.pack(fill="x")
 
-        # Settings card - Mode Selection
         settings_card = tk.Frame(
             main_frame,
             bg=self.card_color,
@@ -252,7 +218,6 @@ class LastLetterApp:
         )
         settings_card.pack(fill="x")
 
-        # Mode label
         mode_label = tk.Label(
             settings_card,
             text="» WORD MODE «",
@@ -262,11 +227,9 @@ class LastLetterApp:
         )
         mode_label.pack(anchor="w", pady=(0, 8))
 
-        # Mode selection frame
         mode_frame = tk.Frame(settings_card, bg=self.card_color)
         mode_frame.pack(fill="x")
 
-        # Radio buttons for mode selection
         short_radio = tk.Radiobutton(
             mode_frame,
             text="SHORT WORDS",
@@ -297,7 +260,6 @@ class LastLetterApp:
         )
         long_radio.pack(side="left")
 
-        # Footer
         footer = tk.Frame(main_frame, bg=self.bg_color)
         footer.pack(fill="x", pady=(10, 0))
 
@@ -310,7 +272,6 @@ class LastLetterApp:
         )
         version_label.pack(side="left")
 
-        # Decorative line
         line_label = tk.Label(
             main_frame,
             text="══════════════════════════════════════════════════════════",
@@ -321,7 +282,6 @@ class LastLetterApp:
         line_label.pack(pady=(6, 0))
 
     def _on_mode_radio(self):
-        """Handle mode radio button selection."""
         mode = self.mode_var.get()
         if mode == "Short":
             self.mode_display.config(text="MODE: SHORT")
@@ -329,7 +289,6 @@ class LastLetterApp:
             self.mode_display.config(text="MODE: LONG")
 
     def load_wordlist(self) -> None:
-        """Load the English word list in the background."""
         try:
             words_set = get_english_words_set(["web2"], lower=False)
             self.wordlist = sorted(words_set)
@@ -343,7 +302,6 @@ class LastLetterApp:
             self._load_fallback_words()
 
     def _load_fallback_words(self) -> None:
-        """Load a fallback word list if the main one fails."""
         fallback_words = [
             "ability", "across", "action", "active", "actual", "address", "advance", "affect", "agency", "agreement",
             "amount", "animal", "annual", "answer", "appeal", "approach", "around", "arrange", "artistic", "assume",
@@ -401,7 +359,6 @@ class LastLetterApp:
         self.root.after(0, lambda: self.status_var.set(f"✔ {len(self.wordlist)} FALLBACK WORDS"))
 
     def find_completion(self, prefix: str) -> Optional[str]:
-        """Find a completion for the given prefix."""
         if not self.wordlist_loaded or not self.wordlist:
             return None
 
@@ -423,7 +380,7 @@ class LastLetterApp:
         mode = self.mode_var.get()
         if mode == "Short":
             chosen = min(candidates, key=len)
-        else:  # Long
+        else:
             chosen = max(candidates, key=len)
 
         self.used_words.add(chosen)
@@ -431,11 +388,9 @@ class LastLetterApp:
         return chosen[len(prefix):]
 
     def _update_word_count(self) -> None:
-        """Update the word count display."""
         self.word_count_var.set(f"WORDS: {len(self.used_words)}")
 
     def _is_roblox_running(self) -> bool:
-        """Check if Roblox is running."""
         try:
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -450,10 +405,9 @@ class LastLetterApp:
             return False
 
     def _focus_roblox_window(self) -> bool:
-        """Focus the Roblox window."""
         try:
             user32 = ctypes.WinDLL("user32", use_last_error=True)
-            
+
             titles = ["Roblox", "Roblox Player", "Roblox Game Client"]
             for title in titles:
                 hwnd = user32.FindWindowW(None, title)
@@ -464,7 +418,7 @@ class LastLetterApp:
                     user32.BringWindowToTop(hwnd)
                     time.sleep(0.1)
                     return True
-            
+
             def enum_callback(hwnd, windows):
                 if user32.IsWindowVisible(hwnd):
                     length = user32.GetWindowTextLengthW(hwnd)
@@ -474,11 +428,11 @@ class LastLetterApp:
                         if "roblox" in buffer.value.lower():
                             windows.append(hwnd)
                 return True
-            
+
             windows = []
             EnumWindows = user32.EnumWindows
             EnumWindows(ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_int, ctypes.c_int)(enum_callback), 0)
-            
+
             if windows:
                 hwnd = windows[0]
                 if user32.IsIconic(hwnd):
@@ -487,14 +441,13 @@ class LastLetterApp:
                 user32.BringWindowToTop(hwnd)
                 time.sleep(0.1)
                 return True
-                
+
             return False
         except Exception as e:
             print(f"Focus error: {e}")
             return False
 
     def refresh_roblox_status(self) -> None:
-        """Update the Roblox status indicator."""
         running = self._is_roblox_running()
         if running:
             self.roblox_status_var.set("ONLINE")
@@ -505,7 +458,6 @@ class LastLetterApp:
         self.root.after(2000, self.refresh_roblox_status)
 
     def on_play_round(self) -> None:
-        """Handle the Play Round button click."""
         prefix = self.prefix_var.get().strip()
         if not prefix:
             messagebox.showwarning("Last Letter Automation", "Please enter starting letters.")
@@ -535,25 +487,22 @@ class LastLetterApp:
         threading.Thread(target=self._type_after_delay, args=(completion,), daemon=True).start()
 
     def on_ctrl_enter(self, event) -> str:
-        """Handle Enter/Ctrl+Enter shortcut."""
         self.on_play_round()
         return "break"
 
     def _type_after_delay(self, completion: str) -> None:
-        """Type the completion after a delay."""
         time.sleep(1.0)
-        
+
         try:
-            # Fixed typing speed at 10ms
             delay = 0.01
-            
+
             for ch in completion:
                 keyboard.press_and_release(ch)
                 time.sleep(delay)
-            
+
             keyboard.send("enter")
             time.sleep(1.0)
-            
+
         except Exception as e:
             print(f"Typing error: {e}")
         finally:
@@ -561,7 +510,6 @@ class LastLetterApp:
 
 
 def main() -> None:
-    """Main entry point."""
     root = tk.Tk()
     app = LastLetterApp(root)
     root.mainloop()
